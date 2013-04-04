@@ -23,9 +23,15 @@ define boxen::osx_defaults(
         fail('Cannot ensure present without domain, key, and value attributes')
       }
 
-      $cmd = $type ? {
+      if ($type == undef) and (($value == true) or ($value == false)) {
+        $type_ = 'bool'
+      } else {
+        $type_ = $type
+      }
+
+      $cmd = $type_ ? {
         undef   => "${defaults_cmd}${host_option} write ${domain} ${key} '${value}'",
-        default => "${defaults_cmd}${host_option} write ${domain} ${key} -${type} '${value}'"
+        default => "${defaults_cmd}${host_option} write ${domain} ${key} -${type_} '${value}'"
       }
 
       exec { "osx_defaults write ${host} ${domain}:${key}=>${value}":
